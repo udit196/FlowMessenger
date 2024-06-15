@@ -73,13 +73,22 @@ app.get('/register' , function(req,res){
 
 app.post("/register", async (req,res)=>{
 
-  const newUser= new User({
-    email :  req.body.email,
-    name :   req.body.name,
-    password: req.body.password
-  });
+  const { email, name, password } = req.body;
   
   try {
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      req.flash('error', 'User already exists with this email');
+      return res.render('register', { imageFileName: 'loginpic.jpg', errorMessage: 'User already exists with this email' });
+    }
+
+    const newUser = new User({
+      email,
+      name,
+      password
+    });
+
     await newUser.save();
     req.session.user = newUser.name;
     req.session.isLoggedIn = true;
