@@ -1,6 +1,6 @@
 const express = require('express');
-const mongoose = require('mongoose');  // requiring the mongoose module
-const passport = require('passport');  // requiring the passport module
+const mongoose = require('mongoose');  
+const passport = require('passport');  
 const bodyParser = require('body-parser');  
 const flash = require('connect-flash');
 const session = require('express-session')
@@ -66,7 +66,7 @@ app.post("/login",(req,res)=>{
   })     
 });
 
-// register page 
+// register page--------------------------------------------------------------------------------------- 
 app.get('/register' , function(req,res){
   res.render('register',{imageFileName:'loginpic.jpg'});
 });
@@ -98,8 +98,8 @@ app.post("/register", async (req,res)=>{
     res.render('register');
   }
 });
-// Contact Page------------------------------------------------------------------------------------
 
+// Contact Page------------------------------------------------------------------------------------
 app.get('/contact', async (req, res) => {
   if(req.session.isLoggedIn){
     const users = await User.find().sort({ name: 'asc' });
@@ -115,12 +115,11 @@ app.post('/companion', async (req, res) => {
   res.redirect('/forum');
 });
 
-// Forum data---------------------------------------------------------------------------------------
-
+// Forum Page---------------------------------------------------------------------------------------
 app.get('/forum', async (req, res) => {
   if(req.session.isLoggedIn){
     try {
-      res.render('discuss', { user: req.session.user, friend: req.session.friend });
+      res.render('discuss', { user: req.session.user, friend: req.session.friend, sendButton:'send-button.png', backButton:'back-button.png'});
       } catch (err) {
         console.error(err);
       res.status(500).send('Internal Server Error');
@@ -131,7 +130,8 @@ app.get('/forum', async (req, res) => {
   }
 });
 
-// New experiment----------------
+// Ajax data---------------------------------------------------------------------------------------
+// Get Message
 app.get('/chats', async (req, res) => {
   const user = req.session.user;
   const friend = req.session.friend;
@@ -145,7 +145,7 @@ app.get('/chats', async (req, res) => {
   }
 });
 
-// Add a new message between user1 and user2
+// Add New Message
 app.post('/chats', async (req, res) => {
   const { message } = req.body;
   const user = req.session.user;

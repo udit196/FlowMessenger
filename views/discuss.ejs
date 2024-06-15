@@ -7,39 +7,43 @@
   <style>
 
     .header {
+      position: sticky;
+      top:0px;
+      left:0px;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      background-color: black;
     }
-    #back-button {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background-color: #4CAF50; /* Green */
-      color: #ffffff; /* White */
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+
+    #back-button{
+      width:35px;
     }
-        
-    #back-button:hover {
-        background-color: #3e8e41; /* Darker green on hover */
+
+    body{
+      background-color: #faf6f4;
+    }
+
+    .header a{
+      position: sticky;
+      top:0px;
+      left:0px;
+      padding: 5px 10px;
+      background-color: white;
     }
     .user {
-        padding: 20px;
-        background-color: lightblue;
+        padding: 15px;
+        color: White;
+        font-size: 20px;
     }
     .container{
       width:80%;
       margin:40px auto;
-      background-color: #f0f0f0;
+      background-color: rgb(44, 43, 43);
       padding:20px;
       border:1px solid #ddd;
     }
     .singleChat{
-      width: 50%;
-      padding:10px;
+      width: 45%;
+      padding:1%;
       margin-bottom:10px;
       border-radius:10px;
     }
@@ -64,19 +68,57 @@
     li{
       display: flex;
     }
+
+    #add-message{
+      position: sticky;
+      bottom: 0px;
+      width:80%;
+      color: #ffffff; /* White */
+      background-color: #1e231c;
+      border: 1px solid black;
+      border-radius: 15px;
+      cursor: pointer;
+      height:50px;
+      display:flex;
+      margin: 0px auto;
+    }
+
+    #message{
+      width:95%;
+      background-color: #1e231c;
+      color: white;
+      border: 1px solid black;
+      border-radius: 15px 0px 0px 15px;
+      font-size: 20px;
+    }
+
+    #sendButton{
+      width:5%;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid black;
+      border-radius:20px;
+    }
   </style>
+</style>
 </head>
 <body>
 
   <div class="header">
-    <a href="/contact"><div id="back-button">Back to Contacts</div></a>
+    <a href="/contact"><img src="<%= backButton %>" id="#back-button" height="50px" width="50px" alt="Wait"></button></a>
     <div class="user"><%= friend %></div>
   </div>
 
   <div class="container">
     <ul id="chat-box"></ul>
-    <textarea rows="4" name="message" id="message" placeholder="Type your message" required></textarea>
-    <button id="sendButton">Send</button>
+  </div>
+
+  <div id="add-message">
+    <input type="text" id="message" name="message" placeholder="Type your message here..." required>
+    <!-- <button id="sendButton"><img src="<%= sendButton%>" id="sender" alt="Wait"></button> -->
+    <div id="sendButton">
+      <img src="<%= sendButton %>" id="sender" height="50px" width="50px" alt="Wait"></button>
+    </div>
   </div>
 
   <script>
