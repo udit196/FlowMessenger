@@ -11,15 +11,8 @@ const app = express();
 const Message = require('./models/Message');
 const User = require('./models/Users');
 
-let check = 0;
-let user='John Doe';
-let friend='John Doe';
-
-app.use(express.static('public'));
-
 // Atlas key
 const url= `${process.env.url}`;
-// const url= 'mongodb://127.0.0.1:27017/myapp';
 mongoose.connect(url, {
   useNewUrlParser: true,
 });
@@ -34,32 +27,23 @@ app.use(session({
   saveUninitialized: false
 }));
 
-app.use(flash());
 
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(express.static('public'));
 
 // Profile page------------------------------------------------------------------------------------------
 app.get('/profile', (req, res) => {
-  // Check for success flash messages
   const successMessage = req.flash('success');
-  
-  // Render the dashboard with the success message
   res.render('profile', { successMessage });
 });
 
 
 // router for login-register form---------------------------------------------------------------------------- 
 app.get('/', function (req, res) {
-  
-  if(check==1){
-    res.render('login',{imageFileName:'loginpic.jpg'});
-  }
-  else{
-    res.render('login',{imageFileName:'loginpic.jpg'});
-  }
-  
+  res.render('login',{imageFileName:'loginpic.jpg'});
 });
 
 app.post("/login",(req,res)=>{
@@ -68,8 +52,8 @@ app.post("/login",(req,res)=>{
   
   User.findOne({email : username}).then((foundUser) => {
     if(foundUser.password===password){
-      user=foundUser.name;
-      check = 1;
+      req.session.user = foundUser.name;
+      req.session.isLoggedIn = true;
       res.redirect('contact');
     }
     else{
@@ -78,6 +62,7 @@ app.post("/login",(req,res)=>{
   })
   .catch((err)=>{
     console.log(err);
+    res.redirect('/');
   })     
 });
 
@@ -86,32 +71,30 @@ app.get('/register' , function(req,res){
   res.render('register',{imageFileName:'loginpic.jpg'});
 });
 
-app.post("/register",(req,res)=>{
-  // console.log(req.body);
+app.post("/register", async (req,res)=>{
+
   const newUser= new User({
     email :  req.body.email,
     name :   req.body.name,
     password: req.body.password
   });
   
-  check = 1;
-  user=req.body.name;
-  newUser.save().then(()=>{
-    
+  try {
+    await newUser.save();
+    req.session.user = newUser.name;
+    req.session.isLoggedIn = true;
     res.redirect('contact');
-    
-  })
-  .catch((err)=>{
+  } catch(err){
     console.log("Error: koi to gadbad hai");
     res.render('register');
-  })
+  }
 });
 // Contact Page------------------------------------------------------------------------------------
 
 app.get('/contact', async (req, res) => {
-  if(check==1){
+  if(req.session.isLoggedIn){
     const users = await User.find().sort({ name: 'asc' });
-    res.render('contact',{users,user});
+    res.render('contact',{users,user: req.session.user});
   }
   else{
     res.redirect('/');
@@ -119,17 +102,16 @@ app.get('/contact', async (req, res) => {
 });
 
 app.post('/companion', async (req, res) => {
-  friend = req.body.option;
-  // console.log(friend);
+  req.session.friend = req.body.option;
   res.redirect('/forum');
 });
 
 // Forum data---------------------------------------------------------------------------------------
 
 app.get('/forum', async (req, res) => {
-  if(check==1){
+  if(req.session.isLoggedIn){
     try {
-        res.render('discuss',{user,friend});
+      res.render('discuss', { user: req.session.user, friend: req.session.friend });
       } catch (err) {
         console.error(err);
       res.status(500).send('Internal Server Error');
@@ -142,6 +124,8 @@ app.get('/forum', async (req, res) => {
 
 // New experiment----------------
 app.get('/chats', async (req, res) => {
+  const user = req.session.user;
+  const friend = req.session.friend;
 
   const chats = await Message.find({$or: [{ user1: user, user2: friend },{ user1: friend, user2: user }]}).sort({ 'messages.timestamp': 1 });
   
@@ -155,7 +139,9 @@ app.get('/chats', async (req, res) => {
 // Add a new message between user1 and user2
 app.post('/chats', async (req, res) => {
   const { message } = req.body;
-  const Author = user;
+  const user = req.session.user;
+  const friend = req.session.friend;
+
   let chat = await Message.findOne({
       $or: [
           { user1: user, user2: friend },
@@ -166,7 +152,7 @@ app.post('/chats', async (req, res) => {
   if (!chat) {
       chat = new Message({ user1:user, user2:friend, messages: [] });
   }
-  chat.messages.push({Author, message });
+  chat.messages.push({Author: user, message });
   await chat.save();
   res.json(chat);
 });
@@ -174,9 +160,10 @@ app.post('/chats', async (req, res) => {
 //Handling user logout------------------------------------------------------------------------------
 
 app.get("/logout", function (req, res) {
-  check = 0;
-  req.logout(function(err) {
-    if (err) { return next(err); }
+  req.session.destroy((err) => {
+    if (err) {
+      return next(err);
+    }
     res.redirect('/');
   });
 });
