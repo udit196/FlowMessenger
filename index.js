@@ -159,7 +159,13 @@ app.post('/chats', async (req, res) => {
   });
 
   if (!chat) {
+    if(user < friend){
       chat = new Message({ user1:user, user2:friend, messages: [] });
+    }
+    else{
+      chat = new Message({ user1:friend, user2:user, messages: [] });
+    }
+      
   }
   chat.messages.push({Author: user, message });
   await chat.save();
