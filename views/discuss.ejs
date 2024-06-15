@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #4CAF50; /* Green */
+      color: #ffffff; /* White */
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+        
+    #back-button:hover {
+        background-color: #3e8e41; /* Darker green on hover */
+    }
+    .user {
+        padding: 20px;
+        background-color: lightblue;
+    }
+    .container{
+      width:80%;
+      margin:40px auto;
+      background-color: #f0f0f0;
+      padding:20px;
+      border:1px solid #ddd;
+    }
+    .singleChat{
+      width: 50%;
+      padding:10px;
+      margin-bottom:10px;
+      border-radius:10px;
+    }
+
+    .left{
+      background-color: black;
+      color: white;
+    }
+
+    .right{
+      background-color: green;
+      color:white;
+    }
+      
+
+    .serious-dater{
+      font-size: 18px;
+      font-weight: bold;
+      background-color: rgb(255, 255, 255);
+    }
+
+    li{
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="/contact"><div id="back-button">Back to Contacts</div></a>
+    <div class="user"><%= friend %></div>
+  </div>
+
+  <div class="container">
+    <ul id="chat-box"></ul>
+    <textarea rows="4" name="message" id="message" placeholder="Type your message" required></textarea>
+    <button id="sendButton">Send</button>
+  </div>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        setInterval(loadChats, 1000);
+    });
+
+    function loadChats() {
+        if (1) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/chats`, true);
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    const chats = JSON.parse(this.responseText);
+                    let output = '';
+                    chats.forEach(chat => {
+                      console.log(chat);
+                      if(chat.Author == '<%= user %>'){
+                        output += `<li><div class="singleChat"></div><div class="right singleChat">${chat.message}</div></li>`;
+                      }
+                      else{
+                        output += `<li><div class="left singleChat">${chat.message}</div><div class="singleChat"></div></li>`;
+                      }
+                      // output += `<li><div class = "singleChat"><strong>${chat.Author}</strong>: ${chat.message}</div></li>`;
+                    });
+                    const chatBox = document.getElementById('chat-box');
+                    chatBox.innerHTML = output;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                  }
+              }
+            xhr.send();
+          }
+      }
+
+    function sendMessage() {
+
+        const message = document.getElementById('message').value;
+
+        if (message) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/chats', true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    document.getElementById('message').value = '';
+                    loadChats();
+                }
+            }
+            xhr.send(JSON.stringify({message }));
+        }
+    }
+
+  </script>
+</body>
+</html>
