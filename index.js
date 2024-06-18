@@ -82,7 +82,7 @@ app.post("/register", async (req,res)=>{
         console.log('Error: ', err);
         return res.render('register');
       }
-      req.session.user = user.body.name;
+      req.session.user = req.body.name;
       req.session.username = req.body.username;
       return res.redirect('/contact');
     });
