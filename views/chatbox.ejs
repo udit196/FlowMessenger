@@ -4,8 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+
+  
   <style>
 
+    *{
+        margin:0px;
+        padding:0px;
+        font-family: 'Poppins', sans-serif;
+    }
+    body{
+        color:white;
+        background-color: rgb(2, 2, 71);
+        width: 100%;
+    }
     .header {
       position: sticky;
       top:0px;
@@ -18,14 +30,7 @@
       width:35px;
     }
 
-    body{
-      background-color: #faf6f4;
-    }
-
     .header a{
-      position: sticky;
-      top:0px;
-      left:0px;
       padding: 5px 10px;
       background-color: white;
     }
@@ -70,8 +75,9 @@
     }
 
     #add-message{
-      position: sticky;
+      position: fixed;
       bottom: 0px;
+      left:10vw;
       width:80%;
       color: #ffffff; /* White */
       background-color: #1e231c;
@@ -100,13 +106,17 @@
       border-radius:20px;
     }
   </style>
-</style>
 </head>
 <body>
 
   <div class="header">
     <a href="/contact"><img src="<%= backButton %>" id="#back-button" height="50px" width="50px" alt="Wait"></button></a>
-    <div class="user"><%= friend %></div>
+    
+    <% if(user == friend){ %>
+      <div class="user">Me(You)</div>
+    <%}else{ %>
+      <div class="user"><%= friend %></div>
+    <%} %>
   </div>
 
   <div class="container">
@@ -117,7 +127,7 @@
     <input type="text" id="message" name="message" placeholder="Type your message here..." required>
     <!-- <button id="sendButton"><img src="<%= sendButton%>" id="sender" alt="Wait"></button> -->
     <div id="sendButton">
-      <img src="<%= sendButton %>" id="sender" height="50px" width="50px" alt="Wait"></button>
+      <img src="<%= sendButton %>" id="sender" height="50px" width="50px" alt="Wait">
     </div>
   </div>
 
