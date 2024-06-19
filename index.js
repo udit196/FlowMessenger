@@ -48,8 +48,8 @@ app.post('/login',
   async function(req, res) {
     const username = req.body.username;
     const user = await User.findOne({ username });
-    req.session.user = user.name;
-    req.session.username = req.body.username;
+    req.session.name = user.name;
+    req.session.user = req.body.username;
     res.redirect('/contact');
   });
 
@@ -82,8 +82,8 @@ app.post("/register", async (req,res)=>{
         console.log('Error: ', err);
         return res.render('register');
       }
-      req.session.user = req.body.name;
-      req.session.username = req.body.username;
+      req.session.name = req.body.name;
+      req.session.user = req.body.username;
       return res.redirect('/contact');
     });
 
@@ -96,16 +96,16 @@ app.post("/register", async (req,res)=>{
 // Profile page------------------------------------------------------------------------------------------
 app.get('/profile', async (req, res) => {
   if (req.isAuthenticated()) {
-    res.render('profile', { username: req.session.username, user: req.session.name, errorMessage: req.flash('error'), successMessage: req.flash('success') });
+    res.render('profile', { user: req.session.user, user_name: req.session.name, errorMessage: req.flash('error'), successMessage: req.flash('success') });
   } else {
     res.redirect('/');
   }
 });
 
 app.post('/profile', async (req, res) => {
-  const { password } = req.body;
+  const { username,name,password } = req.body;
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findOne(username);
     if (user) {
       user.name = name || user.name;
       if (password) {
@@ -143,8 +143,9 @@ app.post('/contact', async (req, res) => {
 app.get('/chatbox', async (req, res) => {
   if(req.isAuthenticated()){
     try {
-
-      res.render('chatbox', { user: req.session.user, friend: req.session.friend, sendButton:'send-button.png', backButton:'back-button.png'});
+      const friend = await User.findOne({ username: req.session.friend });
+      friend_name = friend.name;
+      res.render('chatbox', { user:req.session.user,user_name: req.session.user, friend: req.session.friend,friend_name, sendButton:'send-button.png', backButton:'back-button.png'});
       } catch (err) {
         console.error(err);
       res.status(500).send('Internal Server Error');

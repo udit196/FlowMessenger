@@ -92,10 +92,10 @@
                     <label for=<%= user %>>Me(You)</label>
                 </li>
                 <% users.forEach(person=>{ %>
-                    <% if(person.name != user){ %>
+                    <% if(person.username != user){ %>
                         <li>
-                            <input type="radio" id=<%= person.name %> name="option" value=<%= person.name %> />
-                            <label for=<%= person.name %>><%= person.name %></label>
+                            <input type="radio" id=<%= person.username %> name="option" value=<%= person.username %> />
+                            <label for=<%= person.username %>><%= person.name %></label>
                         </li>
                     <%}%>
                 <%});%>
