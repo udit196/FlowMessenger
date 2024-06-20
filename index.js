@@ -80,7 +80,7 @@ app.post("/register", async (req,res)=>{
     req.login(newUser, function(err) {
       if (err) {
         console.log('Error: ', err);
-        return res.render('register');
+        return res.redirect('register');
       }
       req.session.name = req.body.name;
       req.session.user = req.body.username;
@@ -89,7 +89,7 @@ app.post("/register", async (req,res)=>{
 
   } catch(err){
     console.log("Error: koi to gadbad hai");
-    res.render('register');
+    res.redirect('register');
   }
 });
 
@@ -103,9 +103,9 @@ app.get('/profile', async (req, res) => {
 });
 
 app.post('/profile', async (req, res) => {
-  const { username,name,password } = req.body;
+  const { name,password } = req.body;
   try {
-    const user = await User.findOne({username:username});
+    const user = await User.findOne({username:req.session.user});
     if (user) {
       user.name = name || user.name;
       if (password) {
@@ -121,6 +121,47 @@ app.post('/profile', async (req, res) => {
     req.flash('error', 'An error occurred while updating the profile');
   }
   res.redirect('/profile');
+});
+
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+//Image upload
+app.post('/upload', upload.single('image'), async (req, res) => {
+
+  try {
+    const user = await User.findOne({username:req.session.user});
+    if (user) {
+
+      user.dp.data = req.file.buffer;
+      user.dp.contentType = req.file.mimetype;
+      await user.save();
+      req.flash('success', 'Image uploaded successfully');
+
+    } else {
+      req.flash('error', 'User not found');
+    }
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'An error occurred while updating the profile');
+  }
+  res.redirect('/profile');
+});
+
+// Endpoint to display a single image
+app.get('/image', async (req, res) => {
+  try {
+    const user = await User.findOne({username:req.session.user});
+    res.contentType(user.dp.contentType);
+    console.log(user.dp.data);
+    res.send(user.dp.data);
+  } catch (err) {
+    res.status(500).send('Error retrieving image');
+  }
 });
 
 // Contact Page------------------------------------------------------------------------------------
