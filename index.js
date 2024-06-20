@@ -35,7 +35,7 @@ app.use(express.static('public'));
 
 
 app.get('/', function (req, res) {
-  res.render('get-started',{backButton:'back-button.png',imageFileName:'Bg-home.jpg'});
+  res.render('get-started',{backButton:'back-button.png',imageFileName:'BgHome.jpg'});
 });
 
 // router for login-register form---------------------------------------------------------------------------- 
