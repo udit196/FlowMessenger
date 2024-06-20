@@ -30,6 +30,12 @@
       width:35px;
     }
 
+    #logo img{
+        width:60px;
+        height:60px;
+        border-radius: 100px;
+    }
+
     .header a{
       padding: 5px 10px;
       background-color: white;
@@ -120,7 +126,9 @@
 
   <div class="header">
     <a href="/contact"><img src="<%= backButton %>" id="#back-button" height="50px" width="50px" alt="Wait"></button></a>
-    
+    <div id="logo">
+      <!-- <img src="<%= dp %>" alt="MyOnlineMeal.com"> -->
+    </div>
     <% if(user == friend){ %>
       <div class="user">Me(You)</div>
     <%}else{ %>
@@ -205,5 +213,29 @@
     }
 
   </script>
+
+<script>
+  async function fetchSelectedImage() {
+    const response = await fetch('/friendImage');
+    const selectedImageContainer = document.getElementById('logo');
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      selectedImageContainer.innerHTML = '';
+
+      const imgElement = document.createElement('img');
+      imgElement.src = url;
+      imgElement.alt = 'Selected Image';
+      selectedImageContainer.appendChild(imgElement);
+    } else {
+      let image_ele = '';
+      image_ele += '<img src="<%= dp %>" alt="NoImage.com">'
+      selectedImageContainer.innerHTML = image_ele;
+    }
+  }
+
+  window.onload = fetchSelectedImage;
+</script>
 </body>
 </html>
