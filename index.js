@@ -157,7 +157,6 @@ app.get('/image', async (req, res) => {
   try {
     const user = await User.findOne({username:req.session.user});
     res.contentType(user.dp.contentType);
-    console.log(user.dp.data);
     res.send(user.dp.data);
   } catch (err) {
     res.status(500).send('Error retrieving image');
@@ -169,7 +168,6 @@ app.get('/friendImage', async (req, res) => {
   try {
     const user = await User.findOne({username:req.session.friend});
     res.contentType(user.dp.contentType);
-    console.log(user.dp.data);
     res.send(user.dp.data);
   } catch (err) {
     res.status(500).send('Error retrieving image');
@@ -198,7 +196,7 @@ app.get('/chatbox', async (req, res) => {
     try {
       const friend = await User.findOne({ username: req.session.friend });
       friend_name = friend.name;
-      res.render('chatbox', { user:req.session.user,user_name: req.session.user, friend: req.session.friend,friend_name, sendButton:'send-button.png', backButton:'back-button.png',dp:"dp.png"});
+      res.render('chatbox', { user:req.session.user,user_name: req.session.user, friend: req.session.friend,friend_name, sendButton:'send-button.png', backButton:'back-button2.png',dp:"dp.png"});
       } catch (err) {
         console.error(err);
       res.status(500).send('Internal Server Error');

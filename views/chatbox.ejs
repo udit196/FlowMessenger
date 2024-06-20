@@ -36,10 +36,17 @@
         border-radius: 100px;
     }
 
+    
     .header a{
-      padding: 5px 10px;
-      background-color: white;
+      padding: 5px 0px;
+      /* background-color: white; */
     }
+
+    a img{
+      background-color: white;
+      border-radius: 12px;
+    }
+
     .user {
         padding: 15px;
         color: White;
@@ -164,19 +171,19 @@
                     const chats = JSON.parse(this.responseText);
                     let output = '';
 
-                    var prev_date = '2000-01-01';
+                    // var prev_date = '2000-01-01';
                     chats.forEach(chat => {
                       const date = new Date(chat.timestamp);
-                      const only_date = date.getDate().toString();
-                      const only_month = date.getMonth().toString();
-                      const only_year = date.getYear().toString();
+                      // const only_date = date.getDate().toString();
+                      // const only_month = date.getMonth().toString();
+                      // const only_year = date.getYear().toString();
                       const hours = date.getHours().toString().padStart(2, '0');
                       const minutes = date.getMinutes().toString().padStart(2, '0');
                       const time = `${hours}:${minutes}`;
-                      const chat_date =  `${only_date}-${only_month}-${only_year}`;
+                      // const chat_date =  `${only_date}-${only_month}-${only_year}`;
                       // if(date > prev_date){
                       //   prev_date = date;
-                        output += `<li>${chat_date}</li>`
+                        // output += `<li>${chat_date}</li>`
                       // }
                       if(chat.Author == '<%= user %>'){
                         output += `<li><div class="singleChat"></div><div class="right singleChat"><div class = "up">${chat.message}</div><div class = "down">${time}</div></div></li>`;
