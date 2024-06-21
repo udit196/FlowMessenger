@@ -134,7 +134,7 @@
   <div class="header">
     <a href="/contact"><img src="<%= backButton %>" id="#back-button" height="50px" width="50px" alt="Wait"></button></a>
     <div id="logo">
-      <!-- <img src="<%= dp %>" alt="MyOnlineMeal.com"> -->
+      <img src="<%= dp %>" alt="Selected Image">
     </div>
     <% if(user == friend){ %>
       <div class="user">Me(You)</div>
@@ -235,10 +235,6 @@
       imgElement.src = url;
       imgElement.alt = 'Selected Image';
       selectedImageContainer.appendChild(imgElement);
-    } else {
-      let image_ele = '';
-      image_ele += '<img src="<%= dp %>" alt="NoImage.com">'
-      selectedImageContainer.innerHTML = image_ele;
     }
   }
 
