@@ -76,6 +76,20 @@
       color:white;
     }
 
+    .date-container{
+      font-size: 12px;
+      color: gray;
+      text-align: center;
+      justify-content: center;
+      margin:6px;
+    }
+
+    .date{
+      background-color: black;
+      padding:2px;
+      border-radius: 2px;
+    }
+
     .top{
 
     }
@@ -171,20 +185,24 @@
                     const chats = JSON.parse(this.responseText);
                     let output = '';
 
-                    // var prev_date = '2000-01-01';
+                    var prev_date = '2001-01-01';
+                    
                     chats.forEach(chat => {
-                      const date = new Date(chat.timestamp);
-                      // const only_date = date.getDate().toString();
-                      // const only_month = date.getMonth().toString();
-                      // const only_year = date.getYear().toString();
-                      const hours = date.getHours().toString().padStart(2, '0');
-                      const minutes = date.getMinutes().toString().padStart(2, '0');
-                      const time = `${hours}:${minutes}`;
-                      // const chat_date =  `${only_date}-${only_month}-${only_year}`;
-                      // if(date > prev_date){
-                      //   prev_date = date;
-                        // output += `<li>${chat_date}</li>`
-                      // }
+                      var curr_chat_date = new Date(chat.timestamp);
+                      var curr_only_date = curr_chat_date.getDate().toString().padStart(2, '0');
+                      var curr_only_month = curr_chat_date.getMonth().toString().padStart(2, '0');
+                      var curr_only_year = curr_chat_date.getFullYear().toString();
+                      var hours = curr_chat_date.getHours().toString().padStart(2, '0');
+                      var minutes = curr_chat_date.getMinutes().toString().padStart(2, '0');
+                      var time = `${hours}:${minutes}`;
+                      var curr_date = `${curr_only_year}-${curr_only_month}-${curr_only_date}`;
+                      var curr_rev_date = `${curr_only_date}-${curr_only_month}-${curr_only_year}`;
+
+                      if(curr_date > prev_date){
+                        prev_date = curr_date;
+                        output += `<li class="date-container"><div class="date">${curr_rev_date}</div></li>`
+                      }
+
                       if(chat.Author == '<%= user %>'){
                         output += `<li><div class="singleChat"></div><div class="right singleChat"><div class = "up">${chat.message}</div><div class = "down">${time}</div></div></li>`;
                       }
