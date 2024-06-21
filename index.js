@@ -130,7 +130,7 @@ const fs = require('fs');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-//Image upload
+//Image upload--------------------------------------------------------------------------------------
 app.post('/upload', upload.single('image'), async (req, res) => {
 
   try {
@@ -152,7 +152,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   res.redirect('/profile');
 });
 
-// Endpoint to display a single image
+// Endpoint to display a single image-----------------------------------------------------------------
 app.get('/image', async (req, res) => {
   try {
     const user = await User.findOne({username:req.session.user});
@@ -163,7 +163,7 @@ app.get('/image', async (req, res) => {
   }
 });
 
-// Endpoint to display a friend image
+// Endpoint to display a friend image-----------------------------------------------------------------
 app.get('/friendImage', async (req, res) => {
   try {
     const user = await User.findOne({username:req.session.friend});
@@ -190,7 +190,7 @@ app.post('/contact', async (req, res) => {
   res.redirect('/chatbox');
 });
 
-// Forum Page---------------------------------------------------------------------------------------
+// Chatting Page---------------------------------------------------------------------------------------
 app.get('/chatbox', async (req, res) => {
   if(req.isAuthenticated()){
     try {
@@ -208,7 +208,7 @@ app.get('/chatbox', async (req, res) => {
 });
 
 // Ajax data---------------------------------------------------------------------------------------
-// Get Message
+// Get Messages
 app.get('/chats', async (req, res) => {
   const user = req.session.user;
   const friend = req.session.friend;
@@ -222,7 +222,7 @@ app.get('/chats', async (req, res) => {
   }
 });
 
-// Add New Message
+// Add new message--------------------------------------------------------------------------------
 app.post('/chats', async (req, res) => {
   const { message } = req.body;
   const user = req.session.user;
