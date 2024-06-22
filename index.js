@@ -40,7 +40,7 @@ app.get('/', function (req, res) {
 
 // router for login-register form---------------------------------------------------------------------------- 
 app.get('/login', function (req, res) {
-  res.render('login',{imageFileName:'loginpic.jpg'});
+  res.render('login');
 });
 
 app.post('/login', 
@@ -55,7 +55,7 @@ app.post('/login',
 
 // register page--------------------------------------------------------------------------------------- 
 app.get('/register' , function(req,res){
-  res.render('register',{imageFileName:'loginpic.jpg'});
+  res.render('register');
 });
 
 app.post("/register", async (req,res)=>{
