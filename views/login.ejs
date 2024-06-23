@@ -30,10 +30,11 @@
             margin-bottom: 20px;
         }
 
-        .logo svg {
-            width: 50px;
-            height: 50px;
-            fill: #4285f4;
+        #logo img{
+            width:80px;
+            height:80px;
+            border:5px solid #4285f4;
+            /* border-radius: 100px; */
         }
 
         .form-group {
@@ -95,6 +96,9 @@
 <body>
     <div class="container">
         <div class="logo">
+            <div id="logo">
+                <img src="<%= Maharaja %>" alt="Maharaja_arriving_soon.com">
+            </div>
             <h1>Sign in here</h1>
         </div>
         <form action="/login" method="POST">

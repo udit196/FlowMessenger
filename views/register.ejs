@@ -30,10 +30,11 @@
             margin-bottom: 20px;
         }
 
-        .logo svg {
-            width: 50px;
-            height: 50px;
-            fill: #4285f4;
+        #logo img{
+            width:80px;
+            height:80px;
+            border:5px solid #4285f4;
+            /* border-radius: 100px; */
         }
 
         .form-group {
@@ -109,8 +110,13 @@
 <body>
     <div class="container">
         <div class="logo">
+            <div id="logo">
+                <img src="<%= Maharaja %>" alt="Maharaja_arriving_soon.com">
+            </div>
             <h1>Sign Up here</h1>
         </div>
+
+
         <% if (successMessage.length > 0) { %>
             <div class="success-message"><%= successMessage %></div>
         <% } %>
@@ -130,7 +136,7 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit">Sign in</button>
+            <button type="submit">Sign Up</button>
         </form>
     </div>
 </body>

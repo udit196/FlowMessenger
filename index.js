@@ -40,7 +40,7 @@ app.get('/', function (req, res) {
 
 // router for login-register form---------------------------------------------------------------------------- 
 app.get('/login', function (req, res) {
-  res.render('login');
+  res.render('login',{Maharaja:'my_logo.jpg'});
 });
 
 app.post('/login', 
@@ -55,7 +55,7 @@ app.post('/login',
 
 // register page--------------------------------------------------------------------------------------- 
 app.get('/register' , function(req,res){
-  res.render('register',{errorMessage: req.flash('error'), successMessage: req.flash('success')});
+  res.render('register',{errorMessage: req.flash('error'), successMessage: req.flash('success'),Maharaja:'my_logo.jpg'});
 });
 
 // app.post("/register", async (req,res)=>{
