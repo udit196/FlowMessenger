@@ -55,48 +55,84 @@ app.post('/login',
 
 // register page--------------------------------------------------------------------------------------- 
 app.get('/register' , function(req,res){
-  res.render('register');
+  res.render('register',{errorMessage: req.flash('error'), successMessage: req.flash('success')});
 });
+
+// app.post("/register", async (req,res)=>{
+//   const { username, name, password } = req.body;
+  
+//   try {
+//     const existingUser = await User.findOne({ username });
+
+//     if (existingUser) {
+//       req.flash('error', 'User already exists with this email');
+//       return res.render('register', { imageFileName: 'loginpic.jpg', errorMessage: 'User already exists with this email' });
+//     }
+
+//     const newUser = new User({
+//       username,
+//       name,
+//       password
+//     });
+
+//     await newUser.save();
+
+//     req.login(newUser, function(err) {
+//       if (err) {
+//         console.log('Error: ', err);
+//         return res.redirect('register');
+//       }
+//       req.session.name = req.body.name;
+//       req.session.user = req.body.username;
+//       return res.redirect('/contact');
+//     });
+
+//   } catch(err){
+//     console.log("Error: koi to gadbad hai");
+//     res.redirect('register');
+//   }
+// });
+
 
 app.post("/register", async (req,res)=>{
   const { username, name, password } = req.body;
   
   try {
     const existingUser = await User.findOne({ username });
+    if (!existingUser) {
+        const newUser = new User({
+          username,
+          name,
+          password
+        });
 
-    if (existingUser) {
+        await newUser.save();
+
+      req.login(newUser, function(err) {
+        if (err) {
+          console.log('Error: ', err);
+          return res.redirect('register');
+        }
+        req.session.name = req.body.name;
+        req.session.user = req.body.username;
+        return res.redirect('/contact');
+      });
+    } else {
       req.flash('error', 'User already exists with this email');
-      return res.render('register', { imageFileName: 'loginpic.jpg', errorMessage: 'User already exists with this email' });
+      return res.redirect('/register');
     }
-
-    const newUser = new User({
-      username,
-      name,
-      password
-    });
-
-    await newUser.save();
-
-    req.login(newUser, function(err) {
-      if (err) {
-        console.log('Error: ', err);
-        return res.redirect('register');
-      }
-      req.session.name = req.body.name;
-      req.session.user = req.body.username;
-      return res.redirect('/contact');
-    });
-
-  } catch(err){
-    console.log("Error: koi to gadbad hai");
-    res.redirect('register');
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'An error occurred while Signing In');
   }
 });
+
+
 
 // Profile page------------------------------------------------------------------------------------------
 app.get('/profile', async (req, res) => {
   if (req.isAuthenticated()) {
-    res.render('profile', { user: req.session.user, user_name: req.session.name, errorMessage: req.flash('error'), successMessage: req.flash('success') });
+    res.render('profile', { user: req.session.user, user_name: req.session.name, errorMessage: req.flash('error'), successMessage: req.flash('success'),dp:"dp.png" });
   } else {
     res.redirect('/');
   }
