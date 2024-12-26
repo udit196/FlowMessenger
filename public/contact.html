@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      #logo img{
+        width:60px;
+        height:60px;
+        border-radius: 100px;
+      }
+    </style>
+</head>
+<body>
+
+  <a href="/logout">Logout</a>
+  <a href="/profile">Profile</a>
+  <!-- Friends Section -->
+  <div id="friends-list">
+    <h3>Friends</h3>
+    <ul id="friends-container"></ul>
+  </div>
+
+<!-- Chat Section -->
+
+  <!-- Friend Img -->
+  <div id="logo">
+    <img src="./images/dp.png" alt="Selected Image">
+  </div>
+
+  <!-- Friend messages -->
+  <div id="chat-section">
+    <h3>Chat</h3>
+    <div id="chat-container"></div>
+    <input type="text" id="message" placeholder="Type a message" />
+    <button id="sendButton">Send</button>
+  </div>
+  
+  <!-- For Contacts section -->
+  <script>
+  const userId = window.location.toString().split('?id=')[1];
+  var friendId = userId;
+  document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+    setInterval(loadChats, 1000);
+    getFriends();
+    fetchFriendImage();
+  });
+
+  async function sendMessage() {
+    const messageInput = document.getElementById('message');
+    const message = messageInput.value.trim(); // Trim whitespace from the message
+
+    if (message && friendId !== 'default') {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `/chats?friendId=${friendId}`, true);
+      xhr.setRequestHeader('Content-type', 'application/json');
+
+      xhr.onload = function() {
+          if (this.status === 200) {
+              messageInput.value = ''; // Clear the input field
+              loadChats(); // Reload chats after sending
+          } else {
+              console.error('Failed to send message:', this.statusText);
+          }
+      };
+      xhr.onerror = function() {
+          console.error('An error occurred while sending the message.');
+      };
+      xhr.send(JSON.stringify({message}));
+    }
+  }
+
+  async function loadChats() {
+    if(friendId != 'default'){
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/chats?friendId=${friendId}`, true);
+      xhr.onload = function() {
+        if (this.status === 200) {
+            const result = JSON.parse(this.responseText);
+            const chats = result.messages;
+            // Display the chats in the webpage
+            const chatContainer = document.getElementById('chat-container');
+    
+            let output = '';
+            chats.forEach(chat =>{
+              if(chat.Author == friendId && result.user1 != result.user2){
+                if(chat.Author == result.user1){
+                  output +=
+                  `<div class="chat-message">
+                      <strong>${result.user1_name}:</strong> ${chat.message}
+                  </div>`;
+                }
+                else{
+                  output +=
+                  `<div class="chat-message">
+                      <strong>${result.user2_name}:</strong> ${chat.message}
+                  </div>`;
+                }
+              }
+              else{
+                output +=
+                `<div class="chat-message">
+                    <strong>You:</strong> ${chat.message}
+                </div>`
+              }
+            });
+
+            chatContainer.innerHTML = output;
+
+        }else {
+            console.error('Failed to send message:', this.statusText);
+        }
+      }
+      
+      xhr.onerror = function() {
+          console.error('An error occurred while sending the message.');
+      };
+      xhr.send();
+    }
+  }
+  
+  async function fetchFriendImage() {
+    const response = await fetch(`/api/friendImage?id=${friendId}`);
+    const selectedImageContainer = document.getElementById('logo');
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      selectedImageContainer.innerHTML = '';
+
+      const imgElement = document.createElement('img');
+      imgElement.src = url;
+      imgElement.alt = 'Selected Image';
+      selectedImageContainer.appendChild(imgElement);
+      // display the Friend's image with the friends chat with the user
+    }
+  }
+  
+  async function getFriends(){
+    const response = await fetch('/friends');
+    const friends = await response.json();
+
+    const friendsContainer = document.getElementById('friends-container');
+    friendsContainer.innerHTML = ''; // Clear previous list
+
+    friends.forEach(friend => {
+      const friendItem = document.createElement('li');
+      if(friend._id == userId){
+        friendItem.innerHTML = `
+          <a href="#" data-id="${friend._id}">
+              Me(You)
+          </a>
+      `;
+      }else{
+        friendItem.innerHTML = `
+            <a href="#" data-id="${friend._id}">
+                ${friend.name}
+            </a>
+        `;
+      }
+      friendItem.querySelector('a').addEventListener('click', (e) => {
+          e.preventDefault();
+          friendId = e.target.dataset.id; // Update friendId
+          const chatContainer = document.getElementById('chat-container');
+          chatContainer.innerHTML = ''; // Clear previous chats
+          loadChats(); // Load chats for selected friend
+          fetchFriendImage(); // Fetch friend's image
+      });
+      friendsContainer.appendChild(friendItem);
+    });
+  }
+</script>
+
+</body>
+</html>

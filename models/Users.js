@@ -4,10 +4,11 @@ const userSchema={
     username:String,
     name:String,
     password:String,
-    dp: {
-        data: Buffer,
-        contentType: String
-      }
+    profilePicture: {
+        type: Buffer, // Store binary data
+    },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 };
 
 module.exports = mongoose.model("User",userSchema);

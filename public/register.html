@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
+    <link rel="stylesheet" href="nav.css">
     <style>
         body {
             font-family: sans-serif;
@@ -49,12 +50,17 @@
 
         input[type="username"],
         input[type="name"],
+        input[type="date"],
         input[type="password"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 3px;
             box-sizing: border-box;
+        }
+
+        input[type="date"]::placeholder {
+            color: #999;
         }
 
         button {
@@ -100,6 +106,16 @@
             color: #dc3545;
         }
 
+        .signin {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .signin a {
+            color: #4285f4;
+            text-decoration: none;
+        }
+
         @media (max-width: 400px) {
             .container {
                 padding: 20px;
@@ -110,19 +126,11 @@
 <body>
     <div class="container">
         <div class="logo">
-            <div id="logo">
-                <img src="<%= Maharaja %>" alt="Maharaja_arriving_soon.com">
-            </div>
             <h1>Sign Up here</h1>
         </div>
 
+        <div class="error-message" id="error-message"></div>
 
-        <% if (successMessage.length > 0) { %>
-            <div class="success-message"><%= successMessage %></div>
-        <% } %>
-        <% if (errorMessage.length > 0) { %>
-            <div class="error-message"><%= errorMessage %></div>
-        <% } %>
         <form action="/register" method="POST">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -133,11 +141,41 @@
                 <input type="name" id="name" name="name" placeholder="Enter your name" required>
             </div>
             <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="stateSelect" class="form-select" name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="DOB">Date Of Birth:</label>
+                <input type="date" id="DOB" name="DOB" placeholder="01-01-1970" required>
+            </div>
+            <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
             </div>
             <button type="submit">Sign Up</button>
+            <div class="signin">
+                <a href="/login">Already Registered? Sign in</a>
+            </div>
         </form>
     </div>
+
+        <!-- for flash messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Extract query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMessage = urlParams.get('error');
+            const successMessage = urlParams.get('success');
+
+            // Display messages if present
+            if (errorMessage) {
+                const errorDiv = document.getElementsByClassName('error-message');
+                errorDiv[0].textContent = errorMessage;
+            }
+        });
+    </script>
 </body>
 </html>

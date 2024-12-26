@@ -1,0 +1,1 @@
+{"name":"Local: b","url":"d:\\VS_code\\DEV\\Projects\\Major\\Chat Application\\b.cpp","tests":[{"id":1726125343134,"input":"3\n1 3 8","output":""},{"id":1726125435836,"input":"5\n1 2 3 4 5","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\VS_code\\DEV\\Projects\\Major\\Chat Application\\b.cpp","group":"local","local":true}

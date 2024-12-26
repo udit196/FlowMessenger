@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  #logo img{
+    width:60px;
+    height:60px;
+    border-radius: 100px;
+  }
+</style>
+<body>
+
+  <a href="/logout">Logout</a>
+  <a href="/profile">Profile</a>
+  <!-- Profile Picture -->
+  <div id="logo">
+    <img src="./images/dp.png" alt="Selected Image">
+  </div>
+  <!-- Photo Update button-->
+  <div>
+    <label for="image-upload">Update Profile Picture</label>
+    <input type="file" name="image" id="image-upload" accept="image/*" required>
+  </div>
+
+  <div class="profile-details" id="profile-details">
+    <!-- Naam Username -->
+  </div>
+  
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    fetchImage();
+    fetchUser();
+  });
+
+  async function fetchImage(){
+    const avatarElement = document.getElementById('logo');
+    try {
+      const response = await fetch('/api/profile-picture');
+      if (!response.ok) throw new Error('Failed to fetch profile picture.');
+
+      const blob = await response.blob(); // Convert the response to a Blob
+      const imageUrl = URL.createObjectURL(blob); // Create a URL for the Blob
+
+      avatarElement.innerHTML = `<img src="${imageUrl}" alt="Profile Picture">`;
+    } catch (error) {
+      console.error('Error:', error);
+      avatarElement.textContent = 'No profile picture available.';
+    }
+  }
+
+  async function fetchUser() {
+    try{
+      const response = await fetch('/api/user');
+      if (!response.ok) throw new Error('Failed to fetch user data.');
+      
+      const user = await response.json();
+      
+      const detailsElement = document.getElementById('profile-details');
+      detailsElement.innerHTML = `
+      <p><span>Username:</span> ${user.username}</p>
+        <p><span>Name:</span> ${user.name}</p>
+        <p><span>Gender:</span> ${user.gender}</p>
+        `;
+      }
+      catch (err) {
+        console.error("Error rendering User Profile", err);
+      }
+  }
+
+  document.getElementById('image-upload').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('/upload-image', {
+        method: 'POST',
+        body: formData,
+        enctype:"multipart/form-data",
+      });
+
+      if (response.ok) {
+        await fetchImage();
+        alert('Image uploaded successfully!');
+      } else {
+        console.error('Error uploading image:', response.statusText);
+        alert('Error uploading image.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An unexpected error occurred.');
+    }
+  });
+</script>
+
+</body>
+</html>
