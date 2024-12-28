@@ -53,7 +53,7 @@
     const messageInput = document.getElementById('message');
     const message = messageInput.value.trim(); // Trim whitespace from the message
 
-    if (message && contactId !== 'default') {
+    if (message) {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', `/chats?contactId=${contactId}`, true);
       xhr.setRequestHeader('Content-type', 'application/json');
@@ -74,53 +74,50 @@
   }
 
   async function loadChats() {
-    if(contactId != 'default'){
-
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', `/chats?contactId=${contactId}`, true);
-      xhr.onload = function() {
-        if (this.status === 200) {
-            const result = JSON.parse(this.responseText);
-            const chats = result.messages;
-            // Display the chats in the webpage
-            const chatContainer = document.getElementById('chat-container');
-    
-            let output = '';
-            
-            chats.forEach(chat =>{
-              if(chat.Author == contactId && result.user1 != result.user2){
-                if(chat.Author == result.user1){
-                  output +=
-                  `<div class="chat-message">
-                      <strong>${result.user1_name}:</strong> ${chat.message}
-                  </div>`;
-                }
-                else{
-                  output +=
-                  `<div class="chat-message">
-                      <strong>${result.user2_name}:</strong> ${chat.message}
-                  </div>`;
-                }
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `/chats?contactId=${contactId}`, true);
+    xhr.onload = function() {
+      if (this.status === 200) {
+          const result = JSON.parse(this.responseText);
+          const chats = result.messages;
+          // Display the chats in the webpage
+          const chatContainer = document.getElementById('chat-container');
+  
+          let output = '';
+          
+          chats.forEach(chat =>{
+            if(chat.Author == contactId && result.user1 != result.user2){
+              if(chat.Author == result.user1){
+                output +=
+                `<div class="chat-message">
+                    <strong>${result.user1_name}:</strong> ${chat.message}
+                </div>`;
               }
               else{
                 output +=
                 `<div class="chat-message">
-                    <strong>You:</strong> ${chat.message}
-                </div>`
+                    <strong>${result.user2_name}:</strong> ${chat.message}
+                </div>`;
               }
-            });
+            }
+            else{
+              output +=
+              `<div class="chat-message">
+                  <strong>You:</strong> ${chat.message}
+              </div>`
+            }
+          });
 
-            chatContainer.innerHTML = output;
-        }else {
-            console.error('Failed to send message:', this.statusText);
-        }
+          chatContainer.innerHTML = output;
+      }else {
+          console.error('Failed to send message:', this.statusText);
       }
-      
-      xhr.onerror = function() {
-          console.error('An error occurred while sending the message.');
-      };
-      xhr.send();
     }
+    
+    xhr.onerror = function() {
+        console.error('An error occurred while sending the message.');
+    };
+    xhr.send();
   }
   
   async function fetchContactImage() {
@@ -155,12 +152,21 @@ async function getContacts(){
     if(userResponse.ok){
       const user = await userResponse.json();
       const contactItem = document.createElement('li');
-      
-      contactItem.innerHTML = `
-          <a href="#" data-id="${user._id}">
-              ${user.name}
-          </a>
-      `;
+
+      if(contact != userId){
+        contactItem.innerHTML = `
+            <a href="#" data-id="${user._id}">
+                ${user.name}
+            </a>
+        `;
+      }
+      else{
+        contactItem.innerHTML = `
+            <a href="#" data-id="${user._id}">
+                Me(You)
+            </a>
+        `;
+      }
 
       contactItem.querySelector('a').addEventListener('click', (e) => {
           e.preventDefault();
