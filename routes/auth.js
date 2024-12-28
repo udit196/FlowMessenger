@@ -13,7 +13,7 @@ router.post(
   '/login',
   passport.authenticate('local', { failureRedirect: '/login?error=Invalid%20username%20or%20password' }),
   (req, res) => {
-    res.redirect(`/contact?id=${req.session.passport.user}`);
+    res.redirect('/contact');
   }
 );
 
@@ -32,12 +32,17 @@ router.post('/register', async (req, res) => {
       const newUser = new User({ username, name, gender, DOB, password });
       await newUser.save();
 
+      // Add yourself to Friends 
+      const user = await User.findOne({username:username});
+      user.friends.push(user._id);
+      await user.save();
+
       req.login(newUser, (err) => {
         if (err) {
           console.error('Error:', err);
           return res.redirect(`/register?error=${encodeURIComponent('Something went wrong. Please try again.')}`);
         }
-        return res.redirect(`/contact?id=${req.session.passport.user}`);
+        return res.redirect('/contact');
       });
     } else {
       return res.redirect(`/register?error=${encodeURIComponent('Username is already taken.')}`);

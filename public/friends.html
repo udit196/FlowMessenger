@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="/profile">Profile</a>
+    <a href="/contact">Contact</a>
+    <a href="/logout">Logout</a>
+
+    <h3>Friend Requests</h3>
+    <div id="requestsContainer">
+        <!-- All friend requests -->
+    </div>
+
+    <h3>All Users</h3>
+    <div id="usersContainer">
+        <!-- All users -->
+    </div>
+
+    <script>
+        const userId = window.location.toString().split('?id=')[1]; 
+        document.addEventListener('DOMContentLoaded', (event) => {
+            getRequests();
+            getUsers();
+        });
+        
+        // Fetch Requests
+        async function getRequests(){
+            const response = await fetch('/friendRequests');
+            const requests = await response.json();
+
+            const requestsContainer = document.getElementById('requestsContainer');
+            var output = '';
+
+            const requestDetails = await Promise.all(
+                requests.map(async (requestId) => {
+                    const userResponse = await fetch(`/users/${requestId}`);
+                    if (userResponse.ok) {
+                        const user = await userResponse.json();
+                        return `<div><a href="/acceptRequest?id=${requestId}">${user.name}</a></div>`;
+                    } else {
+                        return `<div>User not found</div>`;
+                    }
+                })
+            );
+
+            output = requestDetails.join('');
+            requestsContainer.innerHTML = output;
+        }
+
+        //Fetch Users
+        async function getUsers(){
+            const response = await fetch('/users');
+            const users = await response.json();
+
+            const usersContainer = document.getElementById('usersContainer');
+            var output = '';
+
+            users.forEach(e => {
+                output += `<div><a href="/sendRequest?id=${e._id}">${e.name}</a></div>`
+            });
+
+            usersContainer.innerHTML = output;
+        }
+    </script>
+</body>
+</html>

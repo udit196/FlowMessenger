@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 const userSchema={
     username:String,
     name:String,
+    gender:String,
     password:String,
     profilePicture: {
         type: Buffer, // Store binary data
     },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+    friends: [{}],
+    friendRequests: [{}]
 };
 
 module.exports = mongoose.model("User",userSchema);

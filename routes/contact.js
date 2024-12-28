@@ -11,6 +11,15 @@ const router = express.Router();
 // Contact Page------------------------------------------------------------------------------------
 router.get('/contact', async (req, res) => {
   if(req.isAuthenticated()){
+    res.redirect(`/contactPage?id=${req.session.passport.user}`);
+  }
+  else{
+    res.redirect('/login');
+  }
+});
+
+router.get('/contactPage', async (req, res) => {
+  if(req.isAuthenticated()){
     res.sendFile(path.join(__dirname, '../public', 'contact.html'));
   }
   else{
@@ -19,13 +28,15 @@ router.get('/contact', async (req, res) => {
 });
 
 //Get All Friends----------------------------------------------------------------------------------
-router.get('/friends', async (req,res) =>{
+router.get('/contacts-list', async (req,res) =>{
     if(req.isAuthenticated()){
-        const users = await User.find().sort({ name: 'asc' });
-        res.json(users);
+      const user = await User.findById(req.session.passport.user);
+
+      const contacts = user.friends;
+      res.json(contacts);
     }
     else{
-        res.redirect('/login');
+      res.redirect('/login');
     }
 });
 
@@ -64,7 +75,7 @@ router.get('/chatbox', async (req, res) => {
 });
 
 // Endpoint to display Friend image-----------------------------------------------------------------
-router.get('/api/friendImage', async (req, res) => {
+router.get('/api/contactImage', async (req, res) => {
   try {
     const friendId = req.query.id;
     const friend = await User.findById(friendId);
@@ -82,14 +93,14 @@ router.get('/api/friendImage', async (req, res) => {
 router.get('/chats', async (req, res) => {
   if (req.isAuthenticated()) {
     const user = req.session.passport.user;
-    const friend = req.query.friendId;
+    const friend = req.query.contactId;
 
     const chats = await Message.findOne({$or: [{ user1: user, user2: friend },{ user1: friend, user2: user }]}).sort({ 'messages.timestamp': 1 });
 
     if (chats) {
         res.json(chats);
     } else {
-        res.json([]);
+        res.status(500).send({ message: 'Error fetching profile picture' });
     } 
   } else {
     res.redirect('/');
@@ -101,7 +112,7 @@ router.post('/chats', async (req, res) => {
   if (req.isAuthenticated()) {
     const { message } = req.body;
     const user = await req.session.passport.user;
-    const friend = await req.query.friendId;
+    const friend = await req.query.contactId;
 
     let chat = await Message.findOne({
         $or: [

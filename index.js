@@ -33,18 +33,15 @@ app.use(express.static('public'));
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const contactRoutes = require('./routes/contact');
+const friendRoutes = require('./routes/friends');
 
 // Use routes
 app.use(authRoutes);
 app.use(profileRoutes);
 app.use(contactRoutes);
+app.use(friendRoutes);
 
 app.get('/', function (req, res) {
-  // if(req.isAuthenticated()){
-  //   req.logout((err) => {
-  //     if (err) return next(err);
-  //   });
-  // }
   res.sendFile(path.join(__dirname, 'public', 'get-started.html'));
 });
 
